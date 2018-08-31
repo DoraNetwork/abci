@@ -61,7 +61,7 @@ func (app *CounterApplication) DeliverTx(tx []byte) types.ResponseDeliverTx {
 	return types.ResponseDeliverTx{Code: code.CodeTypeOK}
 }
 
-func (app *CounterApplication) CheckTx(tx []byte) types.ResponseCheckTx {
+func (app *CounterApplication) CheckTx(tx []byte, local bool) types.ResponseCheckTx {
 	if app.serial {
 		if len(tx) > 8 {
 			return types.ResponseCheckTx{

@@ -242,8 +242,12 @@ func (cli *socketClient) DeliverTxAsync(tx []byte) *ReqRes {
 	return cli.queueRequest(types.ToRequestDeliverTx(tx))
 }
 
-func (cli *socketClient) CheckTxAsync(tx []byte) *ReqRes {
-	return cli.queueRequest(types.ToRequestCheckTx(tx))
+func (cli *socketClient) CheckTxAsync(req types.RequestCheckTx) *ReqRes {
+	return cli.queueRequest(types.ToRequestCheckTx(req))
+}
+
+func (cli *socketClient) GetTxAsync(req types.RequestGetTx) *ReqRes {
+	return nil //TODO: fill
 }
 
 func (cli *socketClient) QueryAsync(req types.RequestQuery) *ReqRes {
@@ -301,10 +305,16 @@ func (cli *socketClient) DeliverTxSync(tx []byte) (*types.ResponseDeliverTx, err
 	return reqres.Response.GetDeliverTx(), cli.Error()
 }
 
-func (cli *socketClient) CheckTxSync(tx []byte) (*types.ResponseCheckTx, error) {
-	reqres := cli.queueRequest(types.ToRequestCheckTx(tx))
+func (cli *socketClient) CheckTxSync(req types.RequestCheckTx) (*types.ResponseCheckTx, error) {
+	reqres := cli.queueRequest(types.ToRequestCheckTx(req))
 	cli.FlushSync()
 	return reqres.Response.GetCheckTx(), cli.Error()
+}
+
+func (cli *socketClient) GetTxSync(req types.RequestGetTx) (*types.ResponseGetTx, error) {
+	reqres := cli.queueRequest(types.ToRequestGetTx(req))
+	cli.FlushSync()
+	return reqres.Response.GetGetTx(), cli.Error()
 }
 
 func (cli *socketClient) QuerySync(req types.RequestQuery) (*types.ResponseQuery, error) {
@@ -394,6 +404,8 @@ func resMatchesReq(req *types.Request, res *types.Response) (ok bool) {
 		_, ok = res.Value.(*types.Response_BeginBlock)
 	case *types.Request_EndBlock:
 		_, ok = res.Value.(*types.Response_EndBlock)
+	case *types.Request_GetTx:
+		_, ok = res.Value.(*types.Response_GetTx)
 	}
 	return ok
 }

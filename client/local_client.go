@@ -81,12 +81,12 @@ func (app *localClient) DeliverTxAsync(tx []byte) *ReqRes {
 	)
 }
 
-func (app *localClient) CheckTxAsync(tx []byte) *ReqRes {
+func (app *localClient) CheckTxAsync(req types.RequestCheckTx) *ReqRes {
 	app.mtx.Lock()
-	res := app.Application.CheckTx(tx)
+	res := app.Application.CheckTx(req.Tx, req.Local)
 	app.mtx.Unlock()
 	return app.callback(
-		types.ToRequestCheckTx(tx),
+		types.ToRequestCheckTx(req),
 		types.ToResponseCheckTx(res),
 	)
 }
@@ -142,6 +142,16 @@ func (app *localClient) EndBlockAsync(req types.RequestEndBlock) *ReqRes {
 	)
 }
 
+func (app *localClient) GetTxAsync(req types.RequestGetTx) *ReqRes {
+	app.mtx.Lock()
+	res := app.Application.GetTx(req)
+	app.mtx.Unlock()
+	return app.callback(
+		types.ToRequestGetTx(req),
+		types.ToResponseGetTx(res),
+	)
+}
+
 //-------------------------------------------------------
 
 func (app *localClient) FlushSync() error {
@@ -173,9 +183,9 @@ func (app *localClient) DeliverTxSync(tx []byte) (*types.ResponseDeliverTx, erro
 	return &res, nil
 }
 
-func (app *localClient) CheckTxSync(tx []byte) (*types.ResponseCheckTx, error) {
+func (app *localClient) CheckTxSync(req types.RequestCheckTx) (*types.ResponseCheckTx, error) {
 	app.mtx.Lock()
-	res := app.Application.CheckTx(tx)
+	res := app.Application.CheckTx(req.Tx, req.Local)
 	app.mtx.Unlock()
 	return &res, nil
 }
@@ -211,6 +221,13 @@ func (app *localClient) BeginBlockSync(req types.RequestBeginBlock) (*types.Resp
 func (app *localClient) EndBlockSync(req types.RequestEndBlock) (*types.ResponseEndBlock, error) {
 	app.mtx.Lock()
 	res := app.Application.EndBlock(req)
+	app.mtx.Unlock()
+	return &res, nil
+}
+
+func (app *localClient) GetTxSync(req types.RequestGetTx) (*types.ResponseGetTx, error) {
+	app.mtx.Lock()
+	res := app.Application.GetTx(req)
 	app.mtx.Unlock()
 	return &res, nil
 }

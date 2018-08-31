@@ -62,9 +62,9 @@ func ToRequestDeliverTx(tx []byte) *Request {
 	}
 }
 
-func ToRequestCheckTx(tx []byte) *Request {
+func ToRequestCheckTx(req RequestCheckTx) *Request {
 	return &Request{
-		Value: &Request_CheckTx{&RequestCheckTx{tx}},
+		Value: &Request_CheckTx{&req},
 	}
 }
 
@@ -95,6 +95,12 @@ func ToRequestBeginBlock(req RequestBeginBlock) *Request {
 func ToRequestEndBlock(req RequestEndBlock) *Request {
 	return &Request{
 		Value: &Request_EndBlock{&req},
+	}
+}
+
+func ToRequestGetTx(req RequestGetTx) *Request {
+	return &Request{
+		Value: &Request_GetTx{&req},
 	}
 }
 
@@ -169,5 +175,11 @@ func ToResponseBeginBlock(res ResponseBeginBlock) *Response {
 func ToResponseEndBlock(res ResponseEndBlock) *Response {
 	return &Response{
 		Value: &Response_EndBlock{&res},
+	}
+}
+
+func ToResponseGetTx(res ResponseGetTx) *Response {
+	return &Response{
+		Value: &Response_GetTx{&res},
 	}
 }

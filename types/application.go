@@ -15,7 +15,7 @@ type Application interface {
 	Query(RequestQuery) ResponseQuery             // Query for state
 
 	// Mempool Connection
-	CheckTx(tx []byte) ResponseCheckTx // Validate a tx for the mempool
+	CheckTx(tx []byte, local bool) ResponseCheckTx // Validate a tx for the mempool
 
 	// Consensus Connection
 	InitChain(RequestInitChain) ResponseInitChain    // Initialize blockchain with validators and other info from TendermintCore
@@ -23,6 +23,7 @@ type Application interface {
 	DeliverTx(tx []byte) ResponseDeliverTx           // Deliver a tx for full processing
 	EndBlock(RequestEndBlock) ResponseEndBlock       // Signals the end of a block, returns changes to the validator set
 	Commit() ResponseCommit                          // Commit the state and return the application Merkle root hash
+	GetTx(RequestGetTx) ResponseGetTx                // Request tx from app, from/to is tx type
 }
 
 //-------------------------------------------------------
@@ -49,7 +50,7 @@ func (BaseApplication) DeliverTx(tx []byte) ResponseDeliverTx {
 	return ResponseDeliverTx{Code: CodeTypeOK}
 }
 
-func (BaseApplication) CheckTx(tx []byte) ResponseCheckTx {
+func (BaseApplication) CheckTx(tx []byte, local bool) ResponseCheckTx {
 	return ResponseCheckTx{Code: CodeTypeOK}
 }
 
@@ -71,6 +72,10 @@ func (BaseApplication) BeginBlock(req RequestBeginBlock) ResponseBeginBlock {
 
 func (BaseApplication) EndBlock(req RequestEndBlock) ResponseEndBlock {
 	return ResponseEndBlock{}
+}
+
+func (BaseApplication) GetTx(req RequestGetTx) ResponseGetTx {
+	return ResponseGetTx{Code: CodeTypeOK, Response: nil}
 }
 
 //-------------------------------------------------------
@@ -108,7 +113,7 @@ func (app *GRPCApplication) DeliverTx(ctx context.Context, req *RequestDeliverTx
 }
 
 func (app *GRPCApplication) CheckTx(ctx context.Context, req *RequestCheckTx) (*ResponseCheckTx, error) {
-	res := app.app.CheckTx(req.Tx)
+	res := app.app.CheckTx(req.Tx, req.Local)
 	return &res, nil
 }
 
@@ -134,5 +139,10 @@ func (app *GRPCApplication) BeginBlock(ctx context.Context, req *RequestBeginBlo
 
 func (app *GRPCApplication) EndBlock(ctx context.Context, req *RequestEndBlock) (*ResponseEndBlock, error) {
 	res := app.app.EndBlock(*req)
+	return &res, nil
+}
+
+func (app *GRPCApplication) GetTx(ctx context.Context, req *RequestGetTx) (*ResponseGetTx, error) {
+	res := app.app.GetTx(*req)
 	return &res, nil
 }

@@ -79,8 +79,12 @@ func (app *PersistentDummyApplication) DeliverTx(tx []byte) types.ResponseDelive
 	return app.app.DeliverTx(tx)
 }
 
-func (app *PersistentDummyApplication) CheckTx(tx []byte) types.ResponseCheckTx {
-	return app.app.CheckTx(tx)
+func (app *PersistentDummyApplication) CheckTx(tx []byte, local bool) types.ResponseCheckTx {
+	return app.app.CheckTx(tx, local)
+}
+
+func (app *PersistentDummyApplication) GetTx(req types.RequestGetTx) types.ResponseGetTx {
+	return app.app.GetTx(req)
 }
 
 // Commit will panic if InitChain was not called

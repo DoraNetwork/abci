@@ -20,9 +20,10 @@ message Request {
     RequestQuery query = 7;
     RequestBeginBlock begin_block = 8;
     RequestCheckTx check_tx = 9;
-    RequestDeliverTx deliver_tx = 19;
+    RequestDeliverTx deliver_tx = 10;
     RequestEndBlock end_block = 11;
     RequestCommit commit = 12;
+    RequestGetTx get_tx = 13;
   }
 }
 
@@ -62,6 +63,7 @@ message RequestBeginBlock {
 
 message RequestCheckTx {
   bytes tx = 1;
+  bool local = 2;
 }
 
 message RequestDeliverTx {
@@ -73,6 +75,12 @@ message RequestEndBlock{
 }
 
 message RequestCommit {
+}
+
+message RequestGetTx {
+  bytes hash = 1;
+  int32 from = 2;
+  int32 to = 3;
 }
 
 //----------------------------------------
@@ -92,6 +100,7 @@ message Response {
     ResponseDeliverTx deliver_tx = 10;
     ResponseEndBlock end_block = 11;
     ResponseCommit commit = 12;
+    ResponseGetTx get_tx = 13;
   }
 }
 
@@ -158,6 +167,11 @@ message ResponseCommit {
   uint32 code = 1;
   bytes data = 2 [(gogoproto.customtype) = "github.com/tendermint/go-wire/data.Bytes", (gogoproto.nullable) = false];
   string log = 3;
+}
+
+message ResponseGetTx {
+  uint32 code = 1;
+  bytes response = 2;
 }
 
 //----------------------------------------
@@ -255,4 +269,5 @@ service ABCIApplication {
   rpc InitChain(RequestInitChain) returns (ResponseInitChain);
   rpc BeginBlock(RequestBeginBlock) returns (ResponseBeginBlock);
   rpc EndBlock(RequestEndBlock) returns (ResponseEndBlock);
+  rpc GetTx(RequestGetTx) returns (ResponseGetTx);
 }

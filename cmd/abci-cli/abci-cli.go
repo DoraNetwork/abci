@@ -545,7 +545,7 @@ func cmdCheckTx(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	res, err := client.CheckTxSync(txBytes)
+	res, err := client.CheckTxSync(types.RequestCheckTx{Tx:txBytes, Local:false})
 	if err != nil {
 		return err
 	}

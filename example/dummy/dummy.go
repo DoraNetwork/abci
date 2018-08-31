@@ -46,7 +46,7 @@ func (app *DummyApplication) DeliverTx(tx []byte) types.ResponseDeliverTx {
 	return types.ResponseDeliverTx{Code: code.CodeTypeOK, Tags: tags}
 }
 
-func (app *DummyApplication) CheckTx(tx []byte) types.ResponseCheckTx {
+func (app *DummyApplication) CheckTx(tx []byte, local bool) types.ResponseCheckTx {
 	return types.ResponseCheckTx{Code: code.CodeTypeOK}
 }
 
