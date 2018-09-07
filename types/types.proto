@@ -218,6 +218,7 @@ message Header {
   bytes data_hash = 7;
   bytes validators_hash = 8;
   bytes app_hash = 9;
+  VrfRandom vrf_random = 10 [(gogoproto.customname) = "Random"];
 }
 
 message BlockID {
@@ -238,6 +239,11 @@ message Validator {
 message Evidence {
   bytes pub_key = 1;
   int64 height = 2;
+}
+
+message VrfRandom {
+  bytes seed = 1;
+  bytes proof = 2;
 }
 
 //----------------------------------------
