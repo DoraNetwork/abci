@@ -57,8 +57,8 @@ message RequestQuery{
 message RequestBeginBlock {
   bytes hash = 1;
   Header header = 2;
-  repeated int32 absent_validators = 3;
-  repeated Evidence byzantine_validators = 4;
+  LastCommitInfo last_commit_info = 3 [(gogoproto.nullable)=false];
+  repeated Evidence byzantine_validators = 4 [(gogoproto.nullable)=false];
 }
 
 message RequestCheckTx {
@@ -205,6 +205,11 @@ message BlockGossip {
   int32 block_part_size_bytes = 1;
 }
 
+message LastCommitInfo {
+  int32 commit_round = 1;
+  repeated VoteInfo votes = 2 [(gogoproto.nullable)=false];
+}
+
 //----------------------------------------
 // Blockchain Types
 
@@ -234,6 +239,11 @@ message PartSetHeader {
 message Validator {
   bytes pub_key = 1;
   int64 power = 2;
+}
+
+message VoteInfo {
+  Validator validator = 1;
+  bool signed_last_block = 2;
 }
 
 message Evidence {
