@@ -224,6 +224,7 @@ message Header {
   bytes validators_hash = 8;
   bytes app_hash = 9;
   VrfRandom vrf_random = 10 [(gogoproto.customname) = "Random"];
+  bytes proposer = 11;
 }
 
 message BlockID {
